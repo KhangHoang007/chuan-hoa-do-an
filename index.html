@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chuẩn Hóa Đồ Án Word — Chuẩn hóa tiểu luận, đồ án trong 1 phút</title>
+<meta name="description" content="Tool chuẩn hóa định dạng tiểu luận, khóa luận, đồ án Word theo đúng quy định trường: căn lề, font, tiêu đề, mục lục tự động, số trang. Chạy ngay trên máy bạn, không cần mạng.">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<style>
+  :root{
+    --blue:#2563eb; --blue-dark:#1e40af; --ink:#0f172a; --mut:#475569;
+    --bg:#f8fafc; --card:#ffffff; --line:#e2e8f0; --green:#22c55e;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
+  .wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+  header{padding:18px 0;display:flex;align-items:center;gap:12px}
+  header img{width:44px;height:44px;border-radius:10px}
+  header b{font-size:19px}
+  .hero{text-align:center;padding:56px 0 40px}
+  .hero h1{font-size:42px;line-height:1.2;letter-spacing:-.5px}
+  .hero h1 em{font-style:normal;color:var(--blue)}
+  .hero p{color:var(--mut);font-size:18px;max-width:640px;margin:18px auto 0}
+  .dl{display:inline-flex;align-items:center;gap:10px;margin-top:30px;background:var(--blue);
+      color:#fff;font-size:19px;font-weight:700;text-decoration:none;padding:16px 34px;border-radius:14px;
+      box-shadow:0 10px 24px rgba(37,99,235,.35);transition:.15s}
+  .dl:hover{background:var(--blue-dark);transform:translateY(-1px)}
+  .dl small{font-weight:400;font-size:13px;opacity:.85}
+  .badges{margin-top:16px;color:var(--mut);font-size:14px}
+  .badges span{margin:0 8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;padding:26px 0}
+  .feat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .feat .ic{font-size:26px}
+  .feat h3{font-size:17px;margin:8px 0 6px}
+  .feat p{color:var(--mut);font-size:15px}
+  .steps{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px;margin:10px 0 26px}
+  .steps h2{font-size:22px;margin-bottom:14px}
+  .steps ol{margin-left:22px;color:var(--mut)}
+  .steps li{margin:6px 0}
+  .steps li b{color:var(--ink)}
+  .note{background:#fffbeb;border:1px solid #fde68a;border-radius:16px;padding:22px 26px;margin-bottom:26px}
+  .note h2{font-size:19px;margin-bottom:8px}
+  .note p,.note li{color:#713f12;font-size:15px}
+  .note ol{margin-left:22px}
+  .faq{padding:6px 0 20px}
+  .faq h2{font-size:22px;margin-bottom:12px}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:10px 0}
+  .faq summary{font-weight:600;cursor:pointer}
+  .faq p{color:var(--mut);margin-top:8px;font-size:15px}
+  footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--mut);font-size:14px;text-align:center}
+  @media (max-width:640px){.hero h1{font-size:31px}.hero p{font-size:16px}}
+  @media (prefers-color-scheme: dark){
+    :root{--ink:#f1f5f9;--mut:#94a3b8;--bg:#0f172a;--card:#1e293b;--line:#334155}
+    .note{background:#292208;border-color:#713f12}.note p,.note li{color:#fde68a}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="icon.svg" alt="Logo Chuẩn Hóa Đồ Án Word">
+    <b>Chuẩn Hóa Đồ Án Word</b>
+  </header>
+
+  <section class="hero">
+    <h1>Đồ án sai định dạng?<br><em>Chuẩn hóa lại trong 1 phút.</em></h1>
+    <p>Tool tự sửa căn lề, font chữ, cỡ chữ, tiêu đề các cấp, mục lục tự động và số trang
+       theo đúng quy định của trường — bạn chỉ cần chọn file và bấm một nút.</p>
+    <!-- TODO: thay href bang link tai exe that (GitHub Releases) sau khi build xong -->
+    <a class="dl" href="https://github.com/KhangHoang007/chuan-hoa-do-an/releases/latest" id="downloadBtn">
+      ⬇️ Tải bản cho Windows <small>(.exe · ~35 MB)</small>
+    </a>
+    <div class="badges"><span>✓ Không cần cài đặt</span><span>✓ Không cần mạng</span><span>✓ File không gửi lên server</span></div>
+  </section>
+
+  <section class="grid">
+    <div class="feat"><div class="ic">📐</div><h3>Học theo file mẫu của trường</h3>
+      <p>Tải lên tối đa 4 file mẫu định dạng của trường/giảng viên — tool tự đọc quy tắc và áp đúng y hệt, không cần chỉnh tay từng thông số.</p></div>
+    <div class="feat"><div class="ic">🎯</div><h3>7 mẫu sẵn theo loại bài</h3>
+      <p>Đồ án tốt nghiệp, khóa luận, tiểu luận môn học, báo cáo thực tập, nghiên cứu khoa học, thuyết minh khóa luận/đồ án...</p></div>
+    <div class="feat"><div class="ic">🧹</div><h3>Tự dọn lỗi bản thảo</h3>
+      <p>Xóa in đậm/in nghiêng thừa ở thân văn, bỏ gạch đầu dòng dính vào đoạn văn, sửa mục lục gõ tay bị lệch, tiêu đề không còn đứng trơ ở cuối trang.</p></div>
+    <div class="feat"><div class="ic">📑</div><h3>Mục lục tự động + số trang</h3>
+      <p>Tự chèn trang mục lục quét theo tiêu đề thật và đánh số trang — mở file trong Word, chuột phải → Update Field là hiện đủ.</p></div>
+    <div class="feat"><div class="ic">🔒</div><h3>Chạy 100% trên máy bạn</h3>
+      <p>Tool là một file .exe chạy offline trên máy của bạn. Đồ án của bạn không được tải lên bất kỳ máy chủ nào.</p></div>
+    <div class="feat"><div class="ic">⚡</div><h3>Một phút là xong</h3>
+      <p>Kéo thả file → chọn mẫu → bấm Chuẩn hóa → tải file kết quả. Việc trước đây ngồi sửa tay cả buổi tối.</p></div>
+  </section>
+
+  <section class="steps">
+    <h2>Cách dùng — 3 bước</h2>
+    <ol>
+      <li><b>Tải file .exe</b> bằng nút ở trên, nhấp đúp để mở — trình duyệt tự bật trang của tool.</li>
+      <li><b>Chọn file .docx</b> cần chuẩn hóa, chọn mẫu định dạng (hoặc tải file mẫu của trường lên).</li>
+      <li><b>Bấm "Chuẩn hóa ngay"</b> và tải file kết quả về. Xong!</li>
+    </ol>
+  </section>
+
+  <section class="note">
+    <h2>⚠️ Lần đầu mở, Windows có thể hiện cảnh báo xanh</h2>
+    <p>Vì đây là phần mềm mới chưa có chữ ký số, Windows SmartScreen sẽ hỏi một lần. Cách mở:</p>
+    <ol>
+      <li>Bấm <b>More info</b> (Thông tin thêm).</li>
+      <li>Bấm <b>Run anyway</b> (Vẫn chạy).</li>
+    </ol>
+    <p>Các lần sau mở bình thường. Trong lúc dùng có một cửa sổ đen đi kèm — cứ để yên, đóng nó là tắt tool.</p>
+  </section>
+
+  <section class="faq">
+    <h2>Câu hỏi thường gặp</h2>
+    <details><summary>Máy tôi không có Python / không rành máy tính, dùng được không?</summary>
+      <p>Được. File .exe đã chứa mọi thứ bên trong — bạn chỉ cần Windows và biết nhấp đúp chuột.</p></details>
+    <details><summary>File của tôi có bị gửi đi đâu không?</summary>
+      <p>Không. Tool chạy hoàn toàn trên máy bạn, tắt mạng vẫn dùng bình thường.</p></details>
+    <details><summary>Trường tôi có quy định riêng thì sao?</summary>
+      <p>Chọn mục "Mẫu của trường / giảng viên" và tải file mẫu định dạng của trường lên (tối đa 4 file) — tool tự học và áp đúng bộ quy tắc đó.</p></details>
+    <details><summary>Có dùng được cho Mac không?</summary>
+      <p>Bản .exe dành cho Windows. Người dùng Mac vui lòng liên hệ để được hỗ trợ cách chạy thay thế.</p></details>
+  </section>
+
+  <footer>
+    Chuẩn Hóa Đồ Án Word · Chạy offline trên Windows · Liên hệ hỗ trợ qua nơi bạn nhận tool này.
+  </footer>
+</div>
+</body>
+</html>
