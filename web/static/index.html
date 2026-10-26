@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chuẩn Hóa Đồ Án — Định dạng Word chuẩn trong vài giây</title>
+<style>
+  :root{
+    --bg:#f4f6fc; --panel:#ffffff; --panel2:#eef1fa; --text:#141c33; --muted:#5b6a8c;
+    --accent:#4f46e5; --accent2:#9333ea; --line:#dde3f2; --ok:#0f9d58; --err:#d93025;
+    --shadow:0 12px 34px rgba(31,38,135,.13);
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0b0f1e; --panel:#151b31; --panel2:#1c2442; --text:#e9edf9; --muted:#94a2c6;
+           --line:#2a3460; --shadow:0 12px 34px rgba(0,0,0,.45); }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text)}
+  .wrap{max-width:860px;margin:0 auto;padding:30px 16px 64px;animation:fadeUp .5s ease both}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  header{text-align:center}
+  .logo{font-size:44px;filter:drop-shadow(0 6px 14px rgba(79,70,229,.35))}
+  h1{margin:8px 0 6px;font-size:34px;letter-spacing:.2px;
+     background:linear-gradient(92deg,var(--accent),var(--accent2));
+     -webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--muted);margin:0 auto 24px;text-align:center;max-width:640px;line-height:1.6}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+  .lbl{display:block;font-size:13px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;
+       color:var(--muted);margin:20px 0 9px}
+  .lbl:first-child{margin-top:0}
+  .drop{border:2px dashed var(--line);border-radius:16px;padding:30px 16px;text-align:center;cursor:pointer;
+        background:var(--panel2);transition:border-color .18s, background .18s, transform .18s}
+  .drop:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .drop.over{border-color:var(--accent2);background:color-mix(in srgb,var(--panel2) 70%,var(--accent) 12%)}
+  .drop .big{font-size:16.5px;font-weight:650}
+  .drop .small{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.5}
+  .chip{display:none;margin-top:12px;align-items:center;gap:10px;justify-content:center;
+        background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:7px 8px 7px 14px;
+        font-weight:600;color:var(--accent);animation:fadeUp .25s ease both}
+  .chip button{border:none;background:var(--panel2);color:var(--muted);width:24px;height:24px;border-radius:50%;
+        cursor:pointer;font-size:13px;line-height:1}
+  .chip button:hover{color:var(--err)}
+  .presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:10px}
+  .preset{border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;cursor:pointer;
+          transition:border-color .15s, background .15s, transform .15s;background:var(--panel)}
+  .preset:hover{transform:translateY(-1px);border-color:var(--accent)}
+  .preset.sel{border-color:var(--accent);background:color-mix(in srgb,var(--panel) 82%,var(--accent) 10%);
+          box-shadow:0 6px 18px rgba(79,70,229,.15)}
+  .preset b{display:block;font-size:15px;margin-bottom:3px}
+  .preset span{color:var(--muted);font-size:12.8px;line-height:1.45;display:block}
+  .preset.custom{border-style:dashed}
+  .sampleZone{display:none;margin-top:12px}
+  .sampleZone.show{display:block;animation:fadeUp .3s ease both}
+  input[type=text]{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);
+        background:var(--panel);color:var(--text);font-size:15px;transition:border-color .15s}
+  input[type=text]:focus{outline:none;border-color:var(--accent)}
+  .opts{display:flex;gap:26px;flex-wrap:wrap;margin-top:6px}
+  .switch{display:flex;align-items:center;gap:9px;font-size:14.5px;cursor:pointer;user-select:none}
+  .switch input{display:none}
+  .track{width:42px;height:24px;border-radius:999px;background:var(--line);position:relative;transition:.2s;flex:none}
+  .track::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+        background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:.2s}
+  .switch input:checked + .track{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+  .switch input:checked + .track::after{left:21px}
+  button.go{width:100%;margin-top:22px;padding:15px;border:none;border-radius:14px;cursor:pointer;
+    font-size:16.5px;font-weight:750;color:#fff;letter-spacing:.2px;
+    background:linear-gradient(92deg,var(--accent),var(--accent2));
+    box-shadow:0 10px 24px rgba(99,72,230,.35);transition:transform .15s, box-shadow .15s, opacity .15s}
+  button.go:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 14px 30px rgba(99,72,230,.42)}
+  button.go:disabled{opacity:.6;cursor:wait}
+  .spin{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.35);
+    border-top-color:#fff;border-radius:50%;vertical-align:-2px;margin-right:8px;animation:sp 0.7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .err{color:var(--err);margin-top:12px;font-size:14px;min-height:18px;text-align:center}
+  .result{display:none;margin-top:22px;border-top:1px solid var(--line);padding-top:18px}
+  .result.show{display:block;animation:fadeUp .35s ease both}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0 16px}
+  .stat{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+  .stat b{display:block;font-size:19px;color:var(--accent)}
+  .stat span{font-size:12.5px;color:var(--muted);line-height:1.4;display:block}
+  .learned{background:color-mix(in srgb,var(--panel) 85%,var(--ok) 8%);border:1px solid var(--line);
+    border-radius:12px;padding:12px 14px;font-size:13.8px;line-height:1.6;margin-bottom:16px;display:none}
+  a.dl{display:block;text-align:center;padding:14px;border-radius:13px;background:var(--ok);color:#fff;
+       font-weight:750;text-decoration:none;font-size:16px;transition:transform .15s}
+  a.dl:hover{transform:translateY(-1px)}
+  .tip{color:var(--muted);font-size:13px;margin-top:12px;line-height:1.6}
+  .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:22px}
+  .feat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:15px 17px}
+  .feat b{display:block;margin-bottom:5px;font-size:15px}
+  .feat span{color:var(--muted);font-size:13.5px;line-height:1.55}
+  footer{text-align:center;color:var(--muted);font-size:12.5px;margin-top:28px;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🎓</div>
+    <h1>Chuẩn Hóa Đồ Án</h1>
+  </header>
+  <p class="sub">Định dạng lại file Word theo đúng quy định trình bày — khổ giấy, căn lề, font chữ,
+     tiêu đề chương/mục, mục lục tự động, số trang. Chọn mẫu có sẵn hoặc
+     <b>tải file mẫu của trường/giảng viên</b> để tool tự học đúng chuẩn đó.</p>
+
+  <div class="card">
+    <span class="lbl">1 · File cần chuẩn hóa</span>
+    <div class="drop" id="drop">
+      <div class="big">📄 Kéo thả file .docx vào đây, hoặc bấm để chọn</div>
+      <div class="small">Tối đa 30 MB · File chỉ dùng để xử lý và tự xóa sau 1 giờ</div>
+      <input type="file" id="file" accept=".docx" hidden>
+    </div>
+    <div class="chip" id="chip"><span id="chipName"></span><button id="chipX" title="Bỏ chọn">✕</button></div>
+
+    <span class="lbl">2 · Chọn mẫu định dạng</span>
+    <div class="presets" id="presets"></div>
+    <div class="sampleZone" id="sampleZone">
+      <div class="drop" id="sampleDrop" style="padding:20px 14px">
+        <div class="big">📐 Thả file MẪU định dạng của trường/giảng viên vào đây</div>
+        <div class="small">Tool sẽ đọc khổ giấy, căn lề, font, cỡ chữ, giãn dòng và kiểu tiêu đề từ file mẫu
+          rồi áp đúng y hệt cho file của bạn. Chọn được <b>tối đa 4 file mẫu</b> — khi có nhiều file,
+          tool gộp lại và lấy quy tắc phổ biến nhất.</div>
+        <input type="file" id="sampleFile" accept=".docx" hidden multiple>
+      </div>
+      <div class="chip" id="sampleChip"><span id="sampleChipName"></span><button id="sampleChipX" title="Bỏ chọn">✕</button></div>
+    </div>
+
+    <span class="lbl">3 · Tên file kết quả</span>
+    <input type="text" id="outName" placeholder="Để trống = tên gốc + _da-chuan-hoa — ví dụ: Do-an-tot-nghiep Nguyen Van A">
+
+    <span class="lbl">4 · Tùy chọn thêm</span>
+    <div class="opts">
+      <label class="switch"><input type="checkbox" id="optPages" checked><span class="track"></span>Thêm số trang</label>
+      <label class="switch"><input type="checkbox" id="optToc" checked><span class="track"></span>Thêm mục lục tự động</label>
+    </div>
+
+    <button class="go" id="go">✨ Chuẩn hóa ngay</button>
+    <div class="err" id="err"></div>
+
+    <div class="result" id="result">
+      <h3 style="margin:0">✅ Chuẩn hóa xong!</h3>
+      <div class="stats" id="stats"></div>
+      <div class="learned" id="learned"></div>
+      <a class="dl" id="dl" href="#">⬇️ Tải file đã chuẩn hóa</a>
+      <p class="tip">Mẹo: mở file bằng Word — khi Word hỏi cập nhật trường dữ liệu (update fields) hãy chọn <b>Yes</b>
+        để mục lục tự điền. Nếu chưa hiện: nhấp chuột phải vào mục lục → <b>Update Field</b>.</p>
+    </div>
+  </div>
+
+  <div class="feats">
+    <div class="feat"><b>📐 Mẫu theo trường &amp; giảng viên</b><span>Mỗi nơi một quy định riêng — tải file mẫu lên, tool tự trích xuất đúng bộ quy tắc đó thay vì bắt bạn chọn mò.</span></div>
+    <div class="feat"><b>🗂️ Nhận diện tiêu đề thông minh</b><span>Chương, mục 1.1 / 1.1.1, chú thích Hình/Bảng được nhận diện kể cả khi gõ tay, thụt lề theo bậc thang từng cấp.</span></div>
+    <div class="feat"><b>📑 Mục lục + số trang tự động</b><span>Hai việc tốn thời gian nhất khi nộp bài được làm xong trong vài giây, kèm báo cáo từng hạng mục đã sửa.</span></div>
+  </div>
+
+  <footer>Công cụ hỗ trợ định dạng — hãy đối chiếu lại với quy định chính thức của trường/khoa trước khi nộp bài.</footer>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+let chosen = null, samples = [], selectedPreset = "chuan_vn";
+
+fetch("/api/presets").then(r => r.json()).then(list => {
+  const box = $("#presets");
+  box.innerHTML = list.map(p =>
+    `<div class="preset ${p.id===selectedPreset?'sel':''}" data-id="${p.id}"><b>${p.label}</b><span>${p.desc||""}</span></div>`).join("")
+    + `<div class="preset custom" data-id="custom"><b>📄 Mẫu của trường / giảng viên</b>
+       <span>Tải file mẫu định dạng lên — tool tự học và áp đúng bộ quy tắc trong file mẫu.</span></div>`;
+  box.querySelectorAll(".preset").forEach(el => el.addEventListener("click", () => {
+    box.querySelectorAll(".preset").forEach(x => x.classList.remove("sel"));
+    el.classList.add("sel");
+    selectedPreset = el.dataset.id;
+    $("#sampleZone").classList.toggle("show", selectedPreset === "custom");
+    $("#err").textContent = "";
+  }));
+});
+
+// Luong chon file (keo tha / bam chon / bo chon)
+(function(){
+  function bind(zoneSel, inputSel, chipSel, nameSel, xSel, assign){
+    const zone = document.querySelector(zoneSel), input = document.querySelector(inputSel);
+    function show(f){
+      if (!f) { document.querySelector(chipSel).style.display = "none"; assign(null); return; }
+      if (!f.name.toLowerCase().endsWith(".docx")) {
+        document.querySelector("#err").textContent = "Chỉ nhận file .docx."; return;
+      }
+      assign(f);
+      document.querySelector(nameSel).textContent = f.name + " · " + (f.size/1024).toFixed(0) + " KB";
+      document.querySelector(chipSel).style.display = "inline-flex";
+      document.querySelector("#err").textContent = "";
+    }
+    zone.addEventListener("click", () => input.click());
+    zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+    zone.addEventListener("drop", e => { e.preventDefault(); zone.classList.remove("over");
+      if (e.dataTransfer.files.length) show(e.dataTransfer.files[0]); });
+    input.addEventListener("change", () => { if (input.files.length) show(input.files[0]); });
+    document.querySelector(xSel).addEventListener("click", e => { e.stopPropagation(); input.value=""; show(null); });
+  }
+  bind("#drop", "#file", "#chip", "#chipName", "#chipX", f => chosen = f);
+})();
+
+// Vung file mau: chon duoc NHIEU file (toi da 4), tool gop quy tac pho bien nhat
+(function(){
+  const zone = $("#sampleDrop"), input = $("#sampleFile"), chip = $("#sampleChip");
+  function show(files){
+    samples = [];
+    chip.style.display = "none";
+    if (!files || !files.length) return;
+    const arr = [...files];
+    if (arr.some(f => !f.name.toLowerCase().endsWith(".docx"))) {
+      $("#err").textContent = "File mẫu phải là file .docx."; return;
+    }
+    if (arr.length > 4) {
+      $("#err").textContent = "Tối đa 4 file mẫu — bạn đã chọn " + arr.length + " file."; return;
+    }
+    samples = arr;
+    $("#sampleChipName").textContent = arr.length + " file mẫu: " +
+      arr.map(f => f.name).join(", ").slice(0, 90);
+    chip.style.display = "inline-flex";
+    $("#err").textContent = "";
+  }
+  zone.addEventListener("click", () => input.click());
+  zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("over"); });
+  zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+  zone.addEventListener("drop", e => { e.preventDefault(); zone.classList.remove("over");
+    show(e.dataTransfer.files); });
+  input.addEventListener("change", () => show(input.files));
+  $("#sampleChipX").addEventListener("click", e => { e.stopPropagation(); input.value = ""; show(null); });
+})();
+
+document.querySelector("#go").addEventListener("click", async () => {
+  const err = document.querySelector("#err");
+  if (!chosen) { err.textContent = "Bạn chưa chọn file .docx cần chuẩn hóa."; return; }
+  if (selectedPreset === "custom" && !samples.length) {
+    err.textContent = "Bạn đã chọn dùng file mẫu — hãy tải file mẫu định dạng lên ở ô phía trên."; return;
+  }
+  const btn = document.querySelector("#go");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin"></span>Đang chuẩn hóa…';
+  err.textContent = "";
+  document.querySelector("#result").classList.remove("show");
+  const fd = new FormData();
+  fd.append("file", chosen);
+  fd.append("preset", selectedPreset === "custom" ? "chuan_vn" : selectedPreset);
+  if (selectedPreset === "custom") samples.forEach(f => fd.append("samples", f));
+  fd.append("output_name", document.querySelector("#outName").value.trim());
+  fd.append("page_numbers", document.querySelector("#optPages").checked);
+  fd.append("toc", document.querySelector("#optToc").checked);
+  try {
+    const res = await fetch("/api/format", { method: "POST", body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Có lỗi xảy ra");
+    const r = data.report;
+    const stats = [
+      [r.chuong, "chương / phần lớn"],
+      [r.muc_cap_1 + r.muc_cap_2, "mục cấp 1 & 2"],
+      [r.muc_cap_3, "mục cấp 3"],
+      [r.chu_thich, "chú thích Hình/Bảng"],
+      [r.bang, "bảng biểu"],
+      [r.doan_van, "đoạn văn chuẩn hóa"],
+    ];
+    document.querySelector("#stats").innerHTML =
+      stats.map(([v, l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("")
+      + (r.so_trang_da_them ? `<div class="stat"><b>✓</b><span>đã thêm số trang</span></div>` : "")
+      + (r.muc_luc_da_chen ? `<div class="stat"><b>✓</b><span>đã chèn mục lục tự động</span></div>` : "");
+    const learned = document.querySelector("#learned");
+    if (data.sample_summary) {
+      const s = data.sample_summary;
+      learned.style.display = "block";
+      learned.innerHTML = `📐 <b>Đã học từ file mẫu của bạn:</b> font ${s.font}, thân văn ${s.co_chu_than_van}pt,
+        giãn dòng ${s.gian_dong}, lề trên/dưới/trái/phải = ${s.le_cm.join(" / ")} cm${s.so_file_mau > 1 ? " (gộp từ " + s.so_file_mau + " file mẫu)" : ""}.`;
+    } else learned.style.display = "none";
+    const dl = document.querySelector("#dl");
+    dl.href = data.download_url;
+    dl.setAttribute("download", data.filename);
+    dl.textContent = "⬇️ Tải file: " + data.filename;
+    document.querySelector("#result").classList.add("show");
+    document.querySelector("#result").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  } catch (e) {
+    err.textContent = e.message;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "✨ Chuẩn hóa ngay";
+  }
+});
+</script>
+</body>
+</html>
