@@ -92,24 +92,31 @@ PRESETS["thuc_tap"] = _variant(
     "Báo cáo thực tập",
     "Báo cáo thực tập tại doanh nghiệp: chuẩn phổ thông, chương 15pt.",
     **{"chapter.size": 15})
-# Tieu luan mon hoc — do truc tiep tu bai tieu luan chuan cua lop (nhom 8, DHXDGT21A,
-# mon Nhap mon nganh xay dung): A4; le 2,5/2/3/2; than van TNR 13 thuong, can deu,
-# gian dong 1.15, doan cach 6pt, thut dau dong 1 cm (doan dau moi muc khong thut);
-# chuong 14 dam canh giua; muc 1. = 14 dam; 1.1 = 13 dam; 1.1.1 = 13 dam nghieng thut 0,5;
-# chu thich 13 dam canh giua; so trang o goc duoi-phai.
+# Tieu luan mon hoc — do truc tiep tu bai mau chuan anh Kord chi dinh (nhom 7,
+# DHXDGT21A, "Hien tuong truot dat", 26/10/2026): A4; phan noi dung le 2,5/2/3/2
+# (phan dau tach section rieng le 2,54 — tai lieu nhieu section thi tool giu nguyen le);
+# than van TNR 13 thuong, can deu. NHIP THAN VAN CHU DAO cua bai mau (101 doan noi
+# dung): gian dong 1.3, Before 6 / After 0, thut dau dong 1,0 cm — trung khop chuan
+# thuyet minh IUH. (Reng cum Loi Mo Dau dung 1.5/6/6/1,25 — lech cuc bo, khong theo.)
+# Chuong 13 dam canh giua (ten chuong in hoa); muc 1. = 13 dam; 1.1 = 13 dam;
+# 1.1.1 = 13 dam nghieng thut 0,5; 1.1.1.1 = 12 nghieng; chu thich hinh/bang 13
+# nghieng (khong dam) canh giua; so trang o goc duoi-phai.
 PRESETS["tieu_luan"] = _variant(
     "Tiểu luận môn học",
-    "Theo bài tiểu luận chuẩn của lớp: TNR 13, giãn dòng 1.15, lề 2,5/2/3/2, số trang góc dưới-phải.",
+    "Theo bài tiểu luận mẫu chuẩn: TNR 13, giãn dòng 1.3, lề 2,5/2/3/2, số trang góc dưới-phải.",
     **{"page.top_cm": 2.5, "page.bottom_cm": 2.0, "page.left_cm": 3.0, "page.right_cm": 2.0,
-       "body.size": 13, "body.line_spacing": 1.15,
+       "body.size": 13, "body.line_spacing": 1.3,
        "body.space_before_pt": 6, "body.space_after_pt": 0,
-       "body.first_line_indent_cm": 1.0, "body.first_para_no_indent": True,
-       "chapter.size": 14, "chapter.space_after_pt": 6,
-       "h1.size": 14, "h2.size": 13, "h2.italic": False, "h2.left_indent_cm": 0.0,
+       "body.first_line_indent_cm": 1.0,
+       "chapter.size": 13, "chapter.space_before_pt": 6, "chapter.space_after_pt": 6,
+       "h1.size": 13, "h1.space_before_pt": 6, "h1.space_after_pt": 0,
+       "h2.size": 13, "h2.italic": False, "h2.left_indent_cm": 0.0,
+       "h2.space_before_pt": 6, "h2.space_after_pt": 0,
        "h3.size": 13, "h3.left_indent_cm": 0.5,
-       "h4": {"size": 13, "bold": False, "italic": True,
-              "space_before_pt": 6, "space_after_pt": 4, "left_indent_cm": 1.0},
-       "caption.size": 13, "caption.bold": True, "caption.italic": False,
+       "h3.space_before_pt": 6, "h3.space_after_pt": 0,
+       "h4": {"size": 12, "bold": False, "italic": True,
+              "space_before_pt": 6, "space_after_pt": 0, "left_indent_cm": 1.0},
+       "caption.size": 13, "caption.bold": False, "caption.italic": True,
        "page_number.alignment": WD_ALIGN_PARAGRAPH.RIGHT})
 
 # Thuyet minh khoa luan/do an — trich nguyen van tu mot file mau thuyet minh
@@ -166,12 +173,16 @@ def apply_para(p, cfg, preset, *, heading=False, first_indent=True):
     pf = p.paragraph_format
     body = preset["body"]
     if heading:
-        # Tieu de dung so GO TAY: go dinh kem danh sach (numPr) thua tu ban thao,
-        # neu khong trinh duyet se day doan lech phai theo dinh dang cua list.
+        # numPr (danh so kieu danh sach) chi la "thua" khi doan DA co so GO TAY
+        # trong van ban — luc do de ca hai se trung so. Neu van ban khong co so
+        # go tay thi numPr la nguon so DUY NHAT (bai chuan dung kieu nay: text
+        # chi la "Hien tuong truot dat.", so "1.1." do numPr sinh khi hien thi)
+        # — go numPr la cat mat so muc cua bai.
         pPr = p._p.find(qn("w:pPr"))
         if pPr is not None:
             numPr = pPr.find(qn("w:numPr"))
-            if numPr is not None:
+            if numPr is not None and re.match(
+                    r"^\s*(\d+(\.\d+)*|[IVX]{1,4})[.)]?\s", p.text or ""):
                 pPr.remove(numPr)
     if "alignment" in cfg:
         p.alignment = cfg["alignment"]
@@ -475,11 +486,33 @@ _CITATION_STARTS = ("Luật", "Nghị định", "Thông tư", "Quyết định",
                     "Công văn", "Hiến pháp")
 
 
-def _strip_prose_dash(p):
+def _dash_grouped(paras, idx):
+    """Doan ke truoc/sau (bo qua doan trong) co phai muc liet ke bat dau bang
+    gach ngang khong? Mot khoi liet ke dung gach la PHONG CACH cua bai (bai mau
+    nhom 7 dung '- ' lam dau muc) — chi gach dinh o doan van xuoi DON DOC moi
+    la loi go thua can xoa."""
+    for step in (-1, 1):
+        seen = 0
+        j = idx + step
+        while 0 <= j < len(paras) and seen < 2:
+            t = paras[j].text.strip()
+            if t:
+                if len(t) >= 2 and t[0] in "-–—" and t[1] == " ":
+                    return True
+                break
+            seen += 1
+            j += step
+    return False
+
+
+def _strip_prose_dash(p, grouped=False):
     """Doan VAN XUOI dai bi go thua dau gach dau dong ('-Trong moi du an...',
     '- Hoc phan Nhap mon...') -> bo dau gach, giu nguyen noi dung. Chi ap dung khi
     doan dai (>=150 ky tu), ket thuc bang dau cham — cac muc LIET KE ngan va danh
-    sach van ban phap luat (Luat/Nghi dinh/Thong tu...) giu nguyen kieu gach."""
+    sach van ban phap luat (Luat/Nghi dinh/Thong tu...) giu nguyen kieu gach.
+    Doan nam trong KHOI liet ke gach (grouped) thi giu nguyen dau gach."""
+    if grouped:
+        return False
     t = p.text.strip()
     if len(t) < 150 or not t.rstrip().endswith("."):
         return False
@@ -665,7 +698,7 @@ def _is_mergeable_tail(p):
     return classify(p) == "body"
 
 
-def _merge_shredded_lines(doc):
+def _merge_shredded_lines(doc, protected=frozenset()):
     """Gop cac dong roi thanh doan van hoan chinh. Nhieu bai sinh vien dan van ban
     (tu PDF/Word khac) bi xe moi dong thanh mot 'doan' rieng — dinh dang tung dong
     se tao khoang cach doan khap noi va loi dam/nghieng tung dong khong sua duoc.
@@ -677,7 +710,8 @@ def _merge_shredded_lines(doc):
     while i < len(paras) - 1:
         p, q = paras[i], paras[i + 1]
         t = p.text.strip()
-        if (_is_mergeable_line(p) and _is_mergeable_tail(q)
+        if (p._p not in protected and q._p not in protected
+                and _is_mergeable_line(p) and _is_mergeable_tail(q)
                 and not t.endswith(_LINE_END_OK)):
             # Noi mot dau cach vao cuoi doan goc neu chua co
             ts = [n for n in p._p.iter() if n.tag == qn("w:t")]
@@ -708,6 +742,12 @@ def _rebuild_quoc_hieu(doc):
     """Khoi quoc hieu 2 cot viet bang dau cach (TRUONG... | CONG HOA...) rat mong
     manh: doi font/do le la cot phai vo xuong dong. Dung lai bang 2 cot khong
     vien thi moi trinh doc deu hien giong nhau. Tra ve True neu da dung lai."""
+    # Quoc hieu da la BANG san (tai lieu hoan thien) thi giu nguyen, khong dung lai.
+    for t in doc.tables:
+        for row in t.rows:
+            for cell in row.cells:
+                if "CỘNG HÒA" in cell.text.upper():
+                    return False
     for i, p in enumerate(doc.paragraphs[:4]):
         if "CỘNG HÒA" not in p.text.upper():
             continue
@@ -893,7 +933,7 @@ def _cap_front_fonts(doc, content_start, cap_pt=13.0):
     return n
 
 
-def _fix_glued_case(doc):
+def _fix_glued_case(doc, protected=frozenset()):
     """Sua chu dinh do dan van ban: 'ChíMinh' -> 'Chí Minh' (ranh gioi chu
     thuong -> chu hoa o giua tu). Chi ap doan than van, khong dung tieu de /
     dong muc luc. Chu dinh ca hai phia thuong (trungphân) khong tu sua duoc."""
@@ -902,6 +942,8 @@ def _fix_glued_case(doc):
     _upper = "A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼẾỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴỶỸ"
     pat = re.compile(f"(?<=[{_lower}])(?=[{_upper}])")
     for p in doc.paragraphs:
+        if p._p in protected:
+            continue
         if p.style.name.startswith("Heading") or is_leader_line(p):
             continue
         if classify(p) != "body":
@@ -913,13 +955,71 @@ def _fix_glued_case(doc):
     return n
 
 
+def _find_toc_field(doc):
+    """Tim field TOC that (Word tu sinh) trong tai lieu. Tra ve (set element cac
+    doan thuoc vung field, chi so doan cuoi cua field). Tai lieu da co muc luc
+    tu dong that la tai lieu DA hoan thien: dot leader cua no do TAB dan sinh ra
+    (khong co ky tu cham trong van ban) nen cac co che nhan dien muc luc go tay
+    khong thay — vong lap chinh tung format lai cac dong muc luc nay nhu van
+    thuong, pha hong muc luc dep san co (bai hoc tu bai mau nhom 7, 26/10)."""
+    protected = set()
+    end_idx = -1
+    # TOC duoc Word boc trong khoi sdt (gallery) — cac doan nam ben trong sdt,
+    # khong xuat hien trong doc.paragraphs nen phai quet rieng o muc body.
+    from lxml import etree
+    for child in doc.element.body:
+        if child.tag == qn("w:sdt") and re.search(
+                r"<w:instrText[^>]*>[^<]*\bTOC\b",
+                etree.tostring(child, encoding="unicode")):
+            for pel in child.iter(qn("w:p")):
+                protected.add(pel)
+    if protected:
+        return protected, end_idx
+    depth = 0
+    in_toc = False
+    toc_depth = 0
+    paras = doc.paragraphs
+    for i, p in enumerate(paras):
+        xml = p._p.xml
+        begins = xml.count('fldCharType="begin"')
+        ends = xml.count('fldCharType="end"')
+        has_toc_instr = bool(re.search(r"<w:instrText[^>]*>[^<]*\bTOC\b", xml))
+        if has_toc_instr and not in_toc:
+            in_toc = True
+            toc_depth = depth
+            if i > 0 and paras[i - 1].text.strip().upper() == "MỤC LỤC":
+                protected.add(paras[i - 1]._p)
+        if in_toc:
+            protected.add(p._p)
+            end_idx = i
+        depth += begins - ends
+        if in_toc and ends and depth <= toc_depth:
+            in_toc = False
+    return protected, end_idx
+
+
+def _has_page_field(doc):
+    """Tai lieu da co field so trang (PAGE/NUMPAGES) trong footer chua?"""
+    for section in doc.sections:
+        for part in (section.footer, section.first_page_footer,
+                     section.even_page_footer):
+            try:
+                if "PAGE" in part._element.xml:
+                    return True
+            except Exception:
+                continue
+    return False
+
+
 def format_document(input_path, output_path, preset="chuan_vn",
                     add_page_numbers=True, add_toc=True):
     if isinstance(preset, str):
         preset = PRESETS[preset]
     doc = Document(input_path)
-    n_merged = _merge_shredded_lines(doc)
-    n_glued = _fix_glued_case(doc)
+    toc_protected, _toc_end = _find_toc_field(doc)
+    polished = bool(toc_protected)
+    n_merged = _merge_shredded_lines(doc, protected=toc_protected)
+    n_glued = _fix_glued_case(doc, protected=toc_protected)
     ensure_heading_styles(doc, preset)
     quoc_hieu_ok = _rebuild_quoc_hieu(doc)
     report = {"preset": preset["label"], "chuong": 0, "muc_cap_1": 0,
@@ -931,11 +1031,16 @@ def format_document(input_path, output_path, preset="chuan_vn",
     report["doan_da_gop"] = n_merged
     report["chu_dinh_da_sua"] = n_glued
 
+    report["muc_luc_tu_dong_co_san"] = polished
     page = preset["page"]
-    for s in doc.sections:
-        s.page_width = Cm(page["width_cm"]); s.page_height = Cm(page["height_cm"])
-        s.top_margin = Cm(page["top_cm"]); s.bottom_margin = Cm(page["bottom_cm"])
-        s.left_margin = Cm(page["left_cm"]); s.right_margin = Cm(page["right_cm"])
+    # Tai lieu nhieu section thuong da tach le co chu dich (vd phan dau 2,54 /
+    # noi dung 2,5-2-3-2 nhu bai mau nhom 7) — ep mot le chung se pha hinh hoc
+    # trang dau. Chi chuan hoa le khi tai lieu co dung 1 section.
+    if len(doc.sections) == 1:
+        for s in doc.sections:
+            s.page_width = Cm(page["width_cm"]); s.page_height = Cm(page["height_cm"])
+            s.top_margin = Cm(page["top_cm"]); s.bottom_margin = Cm(page["bottom_cm"])
+            s.left_margin = Cm(page["left_cm"]); s.right_margin = Cm(page["right_cm"])
 
     # Vung bao ve phan dau: moi doan TRUOC diem bat dau noi dung that su (bia, nhiem vu,
     # loi cam on, muc luc go tay...) duoc GIU NGUYEN, khong ep dinh dang. Diem bat dau
@@ -1006,7 +1111,7 @@ def format_document(input_path, output_path, preset="chuan_vn",
     report["quoc_hieu_da_dung_lai"] = quoc_hieu_ok
     # Thay khoi muc luc go tay bang muc luc tu dong ngay tai vi tri cua no
     toc_replaced = False
-    if add_toc and content_start:
+    if add_toc and content_start and not polished:
         anchor_el = doc.paragraphs[content_start]._p
         toc_replaced = _replace_hand_toc(doc, preset, content_start)
         if toc_replaced:
@@ -1023,7 +1128,17 @@ def format_document(input_path, output_path, preset="chuan_vn",
     first_para_free = bool(preset["body"].get("first_para_no_indent"))
     for idx, p in enumerate(doc.paragraphs):
         text = p.text.strip()
+        if p._p in toc_protected:
+            report["doan_bo_qua"] += 1
+            prev_was_chapter = False
+            continue
         if idx < content_start:
+            if polished:
+                # Tai lieu da hoan thien: phan dau giu nguyen tung doan.
+                if text:
+                    report["doan_bo_qua"] += 1
+                prev_was_chapter = False
+                continue
             # Vung dau: bia / phieu nhiem vu / dong cau truc ngan duoc GIU NGUYEN,
             # nhung doan VAN XUOI (loi cam on, loi gioi thieu...) bi canh giua, dinh
             # gach dau dong trong ban thao thi PHAI chuan hoa nhu than van — bao ve
@@ -1050,7 +1165,7 @@ def format_document(input_path, output_path, preset="chuan_vn",
                     for run in q.runs:
                         run.font.bold = False
                         run.font.italic = False
-                    if _strip_prose_dash(q):
+                    if _strip_prose_dash(q, grouped=_dash_grouped(doc.paragraphs, idx)):
                         report["gach_da_xoa"] += 1
                     report["doan_van"] += 1
                     handled = True
@@ -1084,6 +1199,8 @@ def format_document(input_path, output_path, preset="chuan_vn",
             apply_para(p, preset["chapter"], preset, heading=True)
             for run in p.runs:
                 run.font.all_caps = bool(preset["chapter"].get("caps", True))
+                run.font.bold = True
+                run.font.italic = False
             if kind == "chapter":
                 report["chuong"] += 1
             prev_was_chapter = (kind == "chapter")
@@ -1132,7 +1249,7 @@ def format_document(input_path, output_path, preset="chuan_vn",
                 for run in p.runs:
                     run.font.bold = False
                     run.font.italic = False
-                if _strip_prose_dash(p):
+                if _strip_prose_dash(p, grouped=_dash_grouped(doc.paragraphs, idx)):
                     report["gach_da_xoa"] += 1
             if text:
                 after_heading = False
@@ -1140,20 +1257,33 @@ def format_document(input_path, output_path, preset="chuan_vn",
             report["doan_van"] += 1
         # Phan duoi cua doan bi gon (da tach o tren): dinh dang nhu than van thuong,
         # va vi no la doan dau ngay sau tieu de nen ap dung quy tac khong thut dau dong.
+        # NGOAI LE: doan chuong dang "Chuong n\nTEN CHUONG" — phan duoi la TEN
+        # chuong, phai dinh dang chuong (dam, in hoa, canh giua), khong phai than van.
         if tail is not None and tail.text.strip():
-            no_indent = first_para_free and after_heading
-            apply_para(tail, preset["body"], preset, first_indent=not no_indent)
-            if "\n" in tail.text:
-                tail.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            for run in tail.runs:
-                run.font.bold = False
-                run.font.italic = False
-            report["doan_van"] += 1
-            after_heading = False
-            prev_was_chapter = False
+            if kind in ("chapter", "chapter_title"):
+                apply_para(tail, preset["chapter"], preset, heading=True)
+                for run in tail.runs:
+                    run.font.all_caps = bool(preset["chapter"].get("caps", True))
+                    run.font.bold = True
+                    run.font.italic = False
+                after_heading = True
+                prev_was_chapter = False
+            else:
+                no_indent = first_para_free and after_heading
+                apply_para(tail, preset["body"], preset, first_indent=not no_indent)
+                if "\n" in tail.text:
+                    tail.alignment = WD_ALIGN_PARAGRAPH.LEFT
+                for run in tail.runs:
+                    run.font.bold = False
+                    run.font.italic = False
+                report["doan_van"] += 1
+                after_heading = False
+                prev_was_chapter = False
 
     for table in doc.tables:
         report["bang"] += 1
+        if polished:
+            continue  # bang trong tai lieu hoan thien: giu nguyen dinh dang goc
         for row in table.rows:
             for cell in row.cells:
                 for p in cell.paragraphs:
@@ -1164,9 +1294,12 @@ def format_document(input_path, output_path, preset="chuan_vn",
                                      preset["table_text"]["size"])
 
     if add_page_numbers:
-        add_page_number_footer(doc, preset)
-        report["so_trang_da_them"] = True
-    if add_toc and not toc_replaced:
+        if _has_page_field(doc):
+            report["so_trang_co_san"] = True
+        else:
+            add_page_number_footer(doc, preset)
+            report["so_trang_da_them"] = True
+    if add_toc and not toc_replaced and not polished:
         # Bai da co san muc luc tay (cac dong co CHAM DAN trong van ban) thi
         # KHONG chen them muc luc tu dong — tranh trung lap 2 muc luc lien nhau.
         # (Chi dem dong cham that trong text; dong bieu mau co tab + so o cuoi
